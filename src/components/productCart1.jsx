@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 import { FcLike } from "react-icons/fc";
 import { TbShoppingBagPlus } from "react-icons/tb";
 import { FaChevronRight, FaHeart, FaStar } from "react-icons/fa";
-import { toast } from "react-toastify"; // 🔔 toast import qilindi
-import "react-toastify/dist/ReactToastify.css"; // 🔔 toast styleni chaqiring
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ProductCard1 = () => {
   const { productCard } = data;
@@ -16,6 +16,7 @@ const ProductCard1 = () => {
   });
 
   const [visibleCount, setVisibleCount] = useState(10);
+  const [showHeart, setShowHeart] = useState(null); // ❤️ animatsiya holati
 
   useEffect(() => {
     localStorage.setItem("likedProducts", JSON.stringify(likedProducts));
@@ -24,15 +25,19 @@ const ProductCard1 = () => {
   const toggleLike = (productId) => {
     setLikedProducts((prev) => {
       const updated = { ...prev, [productId]: !prev[productId] };
-
       if (updated[productId]) {
         toast.success("✅ Sevimlilarga qo‘shildi");
       } else {
         toast.error("❌ Sevimlilardan olib tashlandi");
       }
-
       return updated;
     });
+  };
+
+  const handleDoubleClick = (productId) => {
+    toggleLike(productId);
+    setShowHeart(productId);
+    setTimeout(() => setShowHeart(null), 800); // yurakni 800ms dan keyin yo'qotish
   };
 
   const loadMore = () => setVisibleCount((prev) => prev + 10);
@@ -57,8 +62,22 @@ const ProductCard1 = () => {
           <div
             title={product.title}
             key={product.id}
+            onDoubleClick={() => handleDoubleClick(product.id)}
             className="relative max-w-[240px] h-[475px] cursor-pointer transition-all rounded-[15px] hover:shadow-lg flex flex-col overflow-hidden z-10"
           >
+            {/* ❤️ Markazda animatsion yurak */}
+            {showHeart === product.id && (
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1.5, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ duration: 0.6 }}
+                className="absolute top-2/9 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none"
+              >
+                <FcLike size={80} />
+              </motion.div>
+            )}
+
             <motion.button
               variants={iconVariants}
               initial="initial"
