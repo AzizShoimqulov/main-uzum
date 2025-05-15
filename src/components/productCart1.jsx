@@ -61,6 +61,7 @@ const ProductCard1 = () => {
         {limitedProducts.map((product) => (
           <div
             title={product.title}
+            
             key={product.id}
             onDoubleClick={() => handleDoubleClick(product.id)}
             className="relative max-w-[240px] h-[475px] cursor-pointer transition-all rounded-[15px] hover:shadow-lg flex flex-col overflow-hidden z-10"
